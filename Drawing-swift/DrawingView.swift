@@ -13,54 +13,82 @@ import UIKit
 
 class DrawingView: UIView {
   
-  @IBInspectable var lineWidth: CGFloat = 8.0
+  @IBInspectable var lineWidth: CGFloat = 15.0
   
   private var path: UIBezierPath!
-  private var incremental_Image: UIImage!
+  private var currentPath_Array: [(UIColor, Bool, UIBezierPath)] = [] // Drawing color, isDrawing, UIBezierPath
+  private var previousPath_Array: [(UIColor, Bool, UIBezierPath)] = [] // Drawing color, isDrawing, UIBezierPath
+  private var isDrawing: Bool = true
+  private var color: UIColor! = UIColor.black
+  private var draw_Image: UIImage!
   private var points = [CGPoint?](repeating: nil, count: 5) // we now need to keep track of the four points of a Bezier segment and the first control point of the next segment
   private var index: Int = 0
   
+  // MARK: - Public
   func clear() {
-    incremental_Image = nil
+    draw_Image = nil
+    currentPath_Array = []
+    previousPath_Array = []
     setNeedsDisplay()
   }
   
+  func changeColor(color: UIColor) {
+    self.color = color
+  }
+  
+  func undo() {
+    guard currentPath_Array.last != nil else {
+      return
+    }
+    previousPath_Array.append(currentPath_Array.last!)
+    currentPath_Array.removeLast()
+    setNeedsDisplay()
+  }
+  
+  func redo() {
+    guard previousPath_Array.last != nil else {
+      return
+    }
+    currentPath_Array.append(previousPath_Array.last!)
+    previousPath_Array.removeLast()
+    setNeedsDisplay()
+  }
+  
+  func drawOrErase(isDrawing: Bool) {
+    self.isDrawing = isDrawing
+  }
+  
+  // MARK: - Life Cycle
   override func awakeFromNib() {
+    backgroundColor = UIColor.clear
     isMultipleTouchEnabled = false
-    backgroundColor = backgroundColor ?? UIColor.white
-    path = UIBezierPath()
-    path.lineCapStyle = .round
-    path.lineWidth = lineWidth
   }
   
   // Only override drawRect: if you perform custom drawing.
   // An empty implementation adversely affects performance during animation.
   override func draw(_ rect: CGRect) {
-    if incremental_Image != nil {
-      incremental_Image.draw(in: rect)
+    super.draw(rect)
+    if draw_Image != nil {
+      draw_Image.draw(in: rect)
     }
-    path.stroke()
-  }
-  
-  private func drawBitmap() {
-    UIGraphicsBeginImageContextWithOptions(bounds.size, true, 0.0)
-    if incremental_Image == nil {
-      let rectPath = UIBezierPath(rect: bounds)
-      backgroundColor!.setFill()
-      rectPath.fill()
-    } else {
-      incremental_Image.draw(at: CGPoint.zero)
+    for pathProperties in currentPath_Array {
+      let color = pathProperties.0
+      let isDrawing = pathProperties.1
+      let path = pathProperties.2
+      color.setStroke()
+      path.lineWidth = lineWidth
+      path.lineCapStyle = .round
+      path.stroke(with: isDrawing ? .normal : .clear, alpha: 1.0)
     }
-    UIColor.black.setStroke()
-    path.stroke()
-    incremental_Image = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard touches.first != nil else {
       return
     }
+    path = UIBezierPath()
+    previousPath_Array = []
+    currentPath_Array.append((color, isDrawing, path))
     let point = touches.first?.location(in: self)
     index = 0
     points[index] = point
@@ -78,7 +106,7 @@ class DrawingView: UIView {
                           y: (points[2]!.y + points[4]!.y) / 2.0)
       path.move(to: points[0]!)
       path.addCurve(to: points[3]!, controlPoint1: points[1]!, controlPoint2: points[2]!)
-      self.setNeedsDisplay()
+      setNeedsDisplay()
       points[0] = points[3]
       points[1] = points[4]
       index = 1
@@ -89,9 +117,7 @@ class DrawingView: UIView {
     guard touches.first != nil else {
       return
     }
-    drawBitmap()
-    self.setNeedsDisplay()
-    path.removeAllPoints()
+    setNeedsDisplay()
     index = 0
   }
   
