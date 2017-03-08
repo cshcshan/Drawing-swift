@@ -20,13 +20,13 @@ class DrawingView: UIView {
   private var previousPath_Array: [(UIColor, Bool, UIBezierPath)] = [] // Drawing color, isDrawing, UIBezierPath
   private var isDrawing: Bool = true
   private var color: UIColor! = UIColor.black
-  private var draw_Image: UIImage!
+//  private var draw_Image: UIImage!
   private var points = [CGPoint?](repeating: nil, count: 5) // we now need to keep track of the four points of a Bezier segment and the first control point of the next segment
   private var index: Int = 0
   
   // MARK: - Public
   func clear() {
-    draw_Image = nil
+//    draw_Image = nil
     currentPath_Array = []
     previousPath_Array = []
     setNeedsDisplay()
@@ -68,9 +68,9 @@ class DrawingView: UIView {
   // An empty implementation adversely affects performance during animation.
   override func draw(_ rect: CGRect) {
     super.draw(rect)
-    if draw_Image != nil {
-      draw_Image.draw(in: rect)
-    }
+//    if draw_Image != nil {
+//      draw_Image.draw(in: rect)
+//    }
     for pathProperties in currentPath_Array {
       let color = pathProperties.0
       let isDrawing = pathProperties.1

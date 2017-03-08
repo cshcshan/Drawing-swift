@@ -99,6 +99,7 @@
 				TargetAttributes = {
 					338877AF1DE2E4C000657A1B = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = QL662FZ3MK;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -264,6 +265,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = QL662FZ3MK;
 				INFOPLIST_FILE = "Drawing-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cshan.Drawing-swift";
@@ -276,6 +278,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = QL662FZ3MK;
 				INFOPLIST_FILE = "Drawing-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cshan.Drawing-swift";
@@ -303,6 +306,7 @@
 				338877C41DE2E4C000657A1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
